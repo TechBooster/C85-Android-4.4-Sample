@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_levelmetor_background"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="40dip"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="Peak:" />
+
+        <com.example.audioeffectsample.LevelMeterView
+            android:id="@+id/levelMetorPeak"
+            android:layout_width="200dip"
+            android:layout_height="10dip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+0.0dB" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+        <View
+            android:layout_width="40dip"
+            android:layout_height="0dip"/>
+        
+        <com.example.audioeffectsample.LevelMeterLabelView
+            android:id="@+id/levelMetorPeak"
+            android:layout_width="200dip"
+            android:layout_height="5dip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="40dip"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="RMS:" />
+
+        <com.example.audioeffectsample.LevelMeterView
+            android:id="@+id/levelMetorRMS"
+            android:layout_width="200dip"
+            android:layout_height="10dip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+0.0dB" />
+    </LinearLayout>
+
+</LinearLayout>
