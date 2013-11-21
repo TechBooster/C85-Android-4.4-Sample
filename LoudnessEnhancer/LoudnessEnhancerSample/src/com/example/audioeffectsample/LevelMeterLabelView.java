@@ -50,13 +50,19 @@ public class LevelMeterLabelView extends View {
         }
         int width = getWidth();
         int height = getHeight();
+        StringBuilder text = new StringBuilder();
         for (int i = 0; i < 60; i++) {
-            if (i % 5 == 0) {
+            if(i == 0){
+                canvas.drawText("dB", 0, height, mLabelPaint);
+            }
+            else if( i == 59){
+                canvas.drawText("0", mStrokeWidth*2*59, height, mLabelPaint);
+            }
+            else if (i % 5 == 0) {
                 float x = mStrokeWidth * 2 * i;
                 float y = height;
                 int level = Math.round((9600f - 9600f / 60f * i) / 100f);
-                String text = Integer.toString(level);
-                canvas.drawText(text, x, y, mLabelPaint);
+                canvas.drawText("-"+Integer.toString(level), x, y, mLabelPaint);
             }
         }
 

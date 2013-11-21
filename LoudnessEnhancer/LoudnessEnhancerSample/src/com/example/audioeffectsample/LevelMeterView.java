@@ -64,7 +64,8 @@ public class LevelMeterView extends View {
         int height = getHeight();
 
         canvas.drawLines(pts_background, mLevelBackground);
-        int drawlevel = Math.round(((mLevel * -1 / 9600f) * 60f));
+        //int drawlevel = Math.round(((mLevel * -1 / 9600f) * 60f));
+        int drawlevel = Math.round(((mLevel+9600f)/9600f)*60f);
         for (int i = 0; i < drawlevel; i++) {
             float x1 = mStrokeWidth * 2 * i + 5;
             float y1 = height;
