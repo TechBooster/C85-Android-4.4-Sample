@@ -65,24 +65,30 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Target loudness" />
+            android:text="Reference peak" />
 
         <EditText
             android:id="@+id/editTrackGain"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:inputType="number"
+            android:layout_weight="1"
             android:text="" />
 
         <Button
             android:id="@+id/buttonCalc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Calc" />
+            android:text="calc" />
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/textVolume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+   
     <TextView
         android:id="@+id/textPeak"
         android:layout_width="wrap_content"

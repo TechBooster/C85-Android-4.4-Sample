@@ -29,36 +29,43 @@ public class MediaCursorAdapter extends CursorAdapter {
         int id = cursor.getInt(cursor.getColumnIndex(Audio.Media._ID));
         String title = cursor.getString(cursor
                 .getColumnIndex(Audio.Media.TITLE));
+        String artist = cursor.getString(cursor
+                .getColumnIndex(Audio.Media.ARTIST));
 
         TextView textTitle = (TextView) view.findViewById(R.id.textTitle);
-        TextView textMaxPeak = (TextView) view.findViewById(R.id.textMaxPeak);
-        TextView textMaxRMS = (TextView) view.findViewById(R.id.textMaxRMS);
+        TextView textPeakRMS = (TextView) view.findViewById(R.id.textPeakRms);
+        TextView textReplayPeakRms = (TextView) view
+                .findViewById(R.id.textReplayPeakRms);
 
         if (mNowPlaying.getID() == id) {
             view.setBackgroundColor(Color.argb(64, 230, 230, 250));
-        }else{
+        } else {
             view.setBackgroundColor(Color.TRANSPARENT);
         }
 
-        textTitle.setText(title);
-        textMaxPeak.setText("");
-        textMaxRMS.setText("");
+        textTitle.setText(title + "/" + artist);
 
+        long peak = 0;
+        long rms = 0;
+        long gain = 0;
+        float replay_peak = 0;
+        float replay_gain = 0;
         SQLiteDatabase db = mSQLiteOpenHelper.getReadableDatabase();
         if (db != null) {
             Cursor mediaCursor = null;
             try {
-                mediaCursor = db
-                        .query(Loudness.TABLE, new String[] {
-                                Loudness.PEAK_MAX, Loudness.RMS_MAX },
-                                Loudness.MEDIA_ID + " = ?",
-                                new String[] { Integer.toString(id) }, null,
-                                null, null);
+                mediaCursor = db.query(Loudness.TABLE, new String[] {
+                        Loudness.TRACK_PEAK, Loudness.TRACK_RMS,Loudness.TRACK_GAIN,
+                        Loudness.REPLAYGAIN_TRACK_PEAK,
+                        Loudness.REPLAYGAIN_TRACK_GAIN }, Loudness.MEDIA_ID
+                        + " = ?", new String[] { Integer.toString(id) }, null,
+                        null, null);
                 if (mediaCursor != null && mediaCursor.moveToFirst()) {
-                    long peakMax = mediaCursor.getInt(0);
-                    long rmsMax = mediaCursor.getInt(1);
-                    textMaxPeak.setText("PEAK MAX:" + peakMax);
-                    textMaxRMS.setText("RMS MAX:" + rmsMax);
+                    peak = mediaCursor.getInt(0);
+                    rms = mediaCursor.getInt(1);
+                    gain = mediaCursor.getInt(2);
+                    replay_peak = mediaCursor.getFloat(3);
+                    replay_gain = mediaCursor.getFloat(4);
                 }
 
             } finally {
@@ -68,6 +75,10 @@ public class MediaCursorAdapter extends CursorAdapter {
                 db.close();
             }
         }
+        textPeakRMS.setText(String.format("PEAK:%d RMS:%d GAIN:%d", peak, rms, gain));
+        textReplayPeakRms.setText(String
+                .format("REPLAY PEAK:%.4f REPLAY GAIN:%.2fdB", replay_peak,
+                        replay_gain));
     }
 
     @Override
