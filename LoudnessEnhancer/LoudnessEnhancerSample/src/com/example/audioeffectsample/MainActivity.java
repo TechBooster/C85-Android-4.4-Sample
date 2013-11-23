@@ -53,7 +53,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor>,
     private static final String TAG = "LevelMeterMain";
     private static final int MSG_ = 0;
     private static final int GAIN_MAX = 8000;
-    private static final int GAIN_LIMIT = 100;
+    private static final int GAIN_LIMIT = 60;
 
     private TextView mTextVolume;
     private TextView mTextPeak;
@@ -125,14 +125,17 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor>,
             @Override
             public void onWaveFormDataCapture(Visualizer visualizer,
                     byte[] bytes, int samplingRate) {
-                MeasurementPeakRms measurement = new MeasurementPeakRms();
-                visualizer.getMeasurementPeakRms(measurement);
-                mLevelMetorPeak.setPeakRMS(measurement.mPeak);
-                mLevelMetorRMS.setPeakRMS(measurement.mRms);
+                if (visualizer.getEnabled()) {
+                    MeasurementPeakRms measurement = new MeasurementPeakRms();
+                    visualizer.getMeasurementPeakRms(measurement);
+                    mLevelMetorPeak.setPeakRMS(measurement.mPeak);
+                    mLevelMetorRMS.setPeakRMS(measurement.mRms);
 
-                mNowPlaying.setMeasurementPeakRms(measurement);
+                    mNowPlaying.setMeasurementPeakRms(measurement);
 
-                mHandler.sendMessage(mHandler.obtainMessage(MSG_, measurement));
+                    mHandler.sendMessage(mHandler.obtainMessage(MSG_,
+                            measurement));
+                }
             }
 
             @Override
@@ -355,7 +358,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor>,
                                 null, null);
                 if (mediaCursor != null && mediaCursor.moveToFirst()) {
                     int track_gain = mediaCursor.getInt(0);
-                    if (track_gain > GAIN_LIMIT) {
+                    if (Math.abs(track_gain) > GAIN_LIMIT) {
                         gain = track_gain;
                     }
                 }
@@ -369,7 +372,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor>,
 
         // set loudness gain
         mSeekLoudness.setProgress(GAIN_MAX / 2 + gain);
-        
+
         mNowPlaying.reset();
         mNowPlaying.setLoudnessEnable(mLoudness.getEnabled());
         mNowPlaying.setID(id);
@@ -394,37 +397,45 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor>,
     }
 
     private void startCalculation() {
-        int sumPeak = 0;
-        int count = 0;
+        //select median
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT AVG(").append(Loudness.TRACK_PEAK).append(")");
+        sql.append(" FROM (SELECT ").append(Loudness.TRACK_PEAK);
+        sql.append(" FROM ").append(Loudness.TABLE);
+        sql.append(" ORDER BY ").append(Loudness.TRACK_PEAK);
+        sql.append(" LIMIT 2 - (SELECT COUNT(*) FROM ").append(Loudness.TABLE)
+                .append(") % 2");
+        sql.append(" OFFSET (SELECT (COUNT(*) - 1) / 2");
+        sql.append(" FROM ").append(Loudness.TABLE).append("))");
+
         SQLiteDatabase db = mSQLiteOpenHelper.getWritableDatabase();
         if (db != null) {
             Cursor cursor = null;
             try {
-                cursor = db.query(Loudness.TABLE, new String[] { Loudness._ID,
-                        Loudness.TRACK_PEAK }, null, null, null, null, null);
+                cursor = db.rawQuery(sql.toString(), null);
                 if (cursor != null && cursor.moveToFirst()) {
-                    do {
-                        sumPeak += cursor.getInt(1);
-                        count++;
-                    } while (cursor.moveToNext());
+                    int reference_peak = cursor.getInt(0);
 
                     // set reference peak;
-                    int reference_peak = Math.round((float) sumPeak / count);
                     mEditTrackGain.setText(Integer.toString(reference_peak));
-
-                    cursor.moveToFirst();
-                    // set gain
-                    do {
-                        int id = cursor.getInt(0);
-                        int peak = cursor.getInt(1);
-                        int gain = reference_peak - peak;
-                        ContentValues values = new ContentValues();
-                        values.put(Loudness.TRACK_GAIN, gain);
-                        db.update(Loudness.TABLE, values,
-                                Loudness._ID + " = ?",
-                                new String[] { Integer.toString(id) });
-                    } while (cursor.moveToNext());
-                    mAdapter.notifyDataSetChanged();
+                    cursor.close();
+                    cursor = db.query(Loudness.TABLE, new String[] {
+                            Loudness._ID, Loudness.TRACK_PEAK }, null, null,
+                            null, null, null);
+                    if (cursor != null && cursor.moveToFirst()) {
+                        // set gain
+                        do {
+                            int id = cursor.getInt(0);
+                            int peak = cursor.getInt(1);
+                            int gain = reference_peak - peak;
+                            ContentValues values = new ContentValues();
+                            values.put(Loudness.TRACK_GAIN, gain);
+                            db.update(Loudness.TABLE, values, Loudness._ID
+                                    + " = ?",
+                                    new String[] { Integer.toString(id) });
+                        } while (cursor.moveToNext());
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
             } finally {
                 if (cursor != null) {
