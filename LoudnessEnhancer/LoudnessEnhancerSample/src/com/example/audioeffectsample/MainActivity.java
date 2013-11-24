@@ -51,7 +51,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity implements LoaderCallbacks<Cursor>,
         OnItemClickListener, OnClickListener, Callback {
     private static final String TAG = "LevelMeterMain";
-    private static final int MSG_ = 0;
+    private static final int MSG_PEAKRMS = 0;
     private static final int GAIN_MAX = 8000;
     private static final int GAIN_LIMIT = 60;
 
@@ -133,7 +133,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor>,
 
                     mNowPlaying.setMeasurementPeakRms(measurement);
 
-                    mHandler.sendMessage(mHandler.obtainMessage(MSG_,
+                    mHandler.sendMessage(mHandler.obtainMessage(MSG_PEAKRMS,
                             measurement));
                 }
             }
@@ -516,7 +516,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor>,
 
     @Override
     public boolean handleMessage(Message msg) {
-        if (msg.what == MSG_) {
+        if (msg.what == MSG_PEAKRMS) {
             MeasurementPeakRms measurement = (MeasurementPeakRms) msg.obj;
             StringBuilder peakText = new StringBuilder();
             StringBuilder rmsText = new StringBuilder();
