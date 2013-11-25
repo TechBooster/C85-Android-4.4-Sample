@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NfcReader</string>
+    <string name="clear_settings">Clear</string>
+    <string name="empty_message">Please touch NDEF tag including URI records</string>
+</resources>

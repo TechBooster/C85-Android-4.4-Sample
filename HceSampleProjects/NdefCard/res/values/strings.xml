@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NdefCard</string>
+    <string name="servicedesc">NDEF Host Card Service</string>
+    <string name="aiddescription">NFC Forum Type 4 Tag</string>
+</resources>
