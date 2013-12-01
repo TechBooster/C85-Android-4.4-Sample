@@ -1,6 +1,6 @@
-[submodule "chapter07/PrintingFrameworkSample"]
-	path = chapter07/PrintingFrameworkSample
+[submodule "chapter10/PrintingFrameworkSample"]
+	path = chapter10/PrintingFrameworkSample
 	url = https://github.com/sys1yagi/PrintingFrameworkSample.git
-[submodule "chapter07/DropboxPrintService"]
-	path = chapter07/DropboxPrintService
+[submodule "chapter10/DropboxPrintService"]
+	path = chapter10/DropboxPrintService
 	url = https://github.com/sys1yagi/DropboxPrintService.git
