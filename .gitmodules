@@ -4,3 +4,6 @@
 [submodule "chapter10/DropboxPrintService"]
 	path = chapter10/DropboxPrintService
 	url = https://github.com/sys1yagi/DropboxPrintService.git
+[submodule "chapter03/storage-access-framework-sample"]
+	path = chapter03/storage-access-framework-sample
+	url = git@github.com:tomorrowkey/storage-access-framework-sample.git
